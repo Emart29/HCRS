@@ -1,0 +1,292 @@
+[
+  {
+    "id": "G-CHEST-01",
+    "category": "Chest pain",
+    "title": "Chest pain with cardiac warning signs",
+    "level": "emergency",
+    "source": "NHS - Chest pain / Heart attack",
+    "url": "https://www.nhs.uk/conditions/heart-attack/symptoms/",
+    "keywords": ["chest pain", "chest tightness", "pressure", "arm", "jaw", "sweating", "nausea", "heart", "crushing", "radiating"],
+    "text": "Chest pain that feels heavy, tight or pressing, that spreads to the arm, neck, jaw or back, or that comes with sweating, nausea, breathlessness or light-headedness can be a sign of a heart attack. Call emergency services immediately. Do not drive yourself. Do not wait to see if it settles."
+  },
+  {
+    "id": "G-CHEST-02",
+    "category": "Chest pain",
+    "title": "Mild chest discomfort without red flags",
+    "level": "urgent",
+    "source": "NHS 111 - Chest pain",
+    "url": "https://www.nhs.uk/conditions/chest-pain/",
+    "keywords": ["chest pain", "chest discomfort", "sharp", "breathing in", "muscle", "cough", "rib"],
+    "text": "Chest pain that is mild, changes with movement or breathing, or follows a cough or strain is often muscular, but chest pain should be assessed by a clinician the same day if it is new, recurring or unexplained. Escalate to emergency if pain becomes severe, spreads, or comes with breathlessness or sweating."
+  },
+  {
+    "id": "G-BREATH-01",
+    "category": "Breathing difficulty",
+    "title": "Severe breathing difficulty",
+    "level": "emergency",
+    "source": "NHS - Shortness of breath",
+    "url": "https://www.nhs.uk/conditions/shortness-of-breath/",
+    "keywords": ["can't breathe", "cannot breathe", "breathless", "shortness of breath", "blue lips", "gasping", "choking", "wheezing", "struggling to breathe"],
+    "text": "Sudden or severe shortness of breath, being unable to speak in full sentences, blue or grey lips or skin, or choking requires emergency care immediately. Call emergency services."
+  },
+  {
+    "id": "G-BREATH-02",
+    "category": "Breathing difficulty",
+    "title": "Cough, cold and mild chest infection",
+    "level": "self_care",
+    "source": "NHS - Coughs and common cold",
+    "url": "https://www.nhs.uk/conditions/cough/",
+    "keywords": ["cough", "cold", "runny nose", "sneezing", "congestion", "blocked nose", "catarrh"],
+    "text": "Most coughs and colds clear up within 1 to 3 weeks. Rest, fluids and advice from a pharmacist are usually enough. Seek a same-day assessment if the cough lasts more than 3 weeks, you cough up blood, you have chest pain, or you feel very unwell."
+  },
+  {
+    "id": "G-STROKE-01",
+    "category": "Neurological",
+    "title": "Stroke warning signs (FAST)",
+    "level": "emergency",
+    "source": "NHS - Stroke symptoms (FAST)",
+    "url": "https://www.nhs.uk/conditions/stroke/symptoms/",
+    "keywords": ["face drooping", "droop", "slurred speech", "arm weakness", "numb", "one side", "confused", "stroke", "can't speak"],
+    "text": "Face drooping on one side, weakness or numbness in one arm or leg, or slurred or confused speech are signs of a stroke. Time is critical: call emergency services immediately, even if the symptoms go away."
+  },
+  {
+    "id": "G-HEAD-01",
+    "category": "Headache",
+    "title": "Headache with red flags",
+    "level": "emergency",
+    "source": "NHS - Headaches",
+    "url": "https://www.nhs.uk/conditions/headaches/",
+    "keywords": ["worst headache", "sudden headache", "thunderclap", "stiff neck", "head injury", "headache", "vision loss"],
+    "text": "A sudden, very severe headache (the worst ever), a headache after a head injury, or a headache with a stiff neck, high temperature, rash, confusion, seizure or loss of vision needs emergency care."
+  },
+  {
+    "id": "G-HEAD-02",
+    "category": "Headache",
+    "title": "Common tension or migraine-type headache",
+    "level": "self_care",
+    "source": "NHS - Headaches",
+    "url": "https://www.nhs.uk/conditions/headaches/",
+    "keywords": ["headache", "tension", "migraine", "stress", "dehydrated", "screen"],
+    "text": "Most headaches are not serious and get better with rest, fluids and advice from a pharmacist. Book a routine appointment if headaches keep coming back or painkillers do not help."
+  },
+  {
+    "id": "G-FEVER-CHILD-01",
+    "category": "Fever in children",
+    "title": "Fever in babies and children with red flags",
+    "level": "emergency",
+    "source": "NICE NG143 - Fever in under 5s",
+    "url": "https://www.nice.org.uk/guidance/ng143",
+    "keywords": ["baby", "infant", "newborn", "fever", "temperature", "floppy", "not waking", "rash", "fit", "seizure", "under 3 months"],
+    "text": "A baby under 3 months with a temperature of 38C or higher, or any child with fever who is floppy, hard to wake, has a rash that does not fade under a glass, is breathing very fast, or has a fit, needs emergency assessment."
+  },
+  {
+    "id": "G-FEVER-CHILD-02",
+    "category": "Fever in children",
+    "title": "Fever in children without red flags",
+    "level": "urgent",
+    "source": "NICE NG143 - Fever in under 5s",
+    "url": "https://www.nice.org.uk/guidance/ng143",
+    "keywords": ["child", "fever", "temperature", "hot", "toddler", "kid", "son", "daughter"],
+    "text": "Fever in children over 3 months without warning signs can usually be cared for with fluids and monitoring, but a child with fever lasting more than 2 days, reduced drinking, fewer wet nappies, or who seems unusually unwell should be seen the same day."
+  },
+  {
+    "id": "G-MALARIA-01",
+    "category": "Fever (adult)",
+    "title": "Fever in a malaria-endemic area",
+    "level": "urgent",
+    "source": "WHO - Guidelines for malaria",
+    "url": "https://www.who.int/publications/i/item/guidelines-for-malaria",
+    "keywords": ["fever", "malaria", "chills", "shivering", "sweats", "body aches", "lagos", "nigeria", "africa", "mosquito", "travel"],
+    "text": "Anyone with fever who lives in or has travelled to a malaria-endemic area should get a malaria test the same day. Malaria can become severe quickly. Confusion, repeated vomiting, difficulty breathing, dark urine or yellow eyes are danger signs that need emergency care."
+  },
+  {
+    "id": "G-FEVER-ADULT-01",
+    "category": "Fever (adult)",
+    "title": "Fever in adults without red flags",
+    "level": "routine",
+    "source": "NHS - High temperature (fever) in adults",
+    "url": "https://www.nhs.uk/conditions/fever-in-adults/",
+    "keywords": ["fever", "temperature", "hot", "flu", "aches", "tired"],
+    "text": "A high temperature usually goes away in 3 days. Rest and fluids help. Speak to a clinician if the temperature lasts more than 3 days, you have a weakened immune system, or you have other worrying symptoms."
+  },
+  {
+    "id": "G-ABDO-01",
+    "category": "Abdominal pain",
+    "title": "Severe abdominal pain with red flags",
+    "level": "emergency",
+    "source": "NHS - Stomach ache",
+    "url": "https://www.nhs.uk/conditions/stomach-ache/",
+    "keywords": ["severe stomach pain", "vomiting blood", "black stool", "rigid", "abdominal pain", "can't stand", "collapse", "appendix"],
+    "text": "Sudden severe abdominal pain, pain with a hard swollen tummy, vomiting blood, black or bloody stools, or pain with collapse needs emergency care."
+  },
+  {
+    "id": "G-ABDO-02",
+    "category": "Abdominal pain",
+    "title": "Persistent or moderate abdominal pain",
+    "level": "urgent",
+    "source": "NHS - Stomach ache",
+    "url": "https://www.nhs.uk/conditions/stomach-ache/",
+    "keywords": ["stomach pain", "abdominal pain", "tummy", "cramps", "right side", "lower right", "persistent"],
+    "text": "Stomach pain that is getting worse, keeps coming back, is in the lower right side, or comes with fever should be assessed the same day."
+  },
+  {
+    "id": "G-GI-01",
+    "category": "Diarrhoea and vomiting",
+    "title": "Diarrhoea and vomiting",
+    "level": "self_care",
+    "source": "NHS - Diarrhoea and vomiting",
+    "url": "https://www.nhs.uk/conditions/diarrhoea-and-vomiting/",
+    "keywords": ["diarrhoea", "diarrhea", "vomiting", "stomach bug", "food poisoning", "nausea", "loose stool"],
+    "text": "Diarrhoea and vomiting usually stop within a few days. Drink plenty of fluids, using oral rehydration solution if available. Get same-day help if you show signs of dehydration (very little urine, dizziness), blood in stools, or symptoms last more than 7 days (2 days of vomiting)."
+  },
+  {
+    "id": "G-GI-02",
+    "category": "Diarrhoea and vomiting",
+    "title": "Dehydration warning signs",
+    "level": "urgent",
+    "source": "WHO - Diarrhoeal disease",
+    "url": "https://www.who.int/news-room/fact-sheets/detail/diarrhoeal-disease",
+    "keywords": ["dehydration", "no urine", "dry mouth", "sunken eyes", "dizzy", "no wet nappy", "can't keep fluids"],
+    "text": "Signs of dehydration include passing little or no urine, sunken eyes, dry mouth and dizziness. Children and older adults are at higher risk. Anyone who cannot keep fluids down or shows these signs needs same-day assessment."
+  },
+  {
+    "id": "G-INJ-01",
+    "category": "Injuries",
+    "title": "Serious injury or uncontrolled bleeding",
+    "level": "emergency",
+    "source": "NHS - When to go to A&E",
+    "url": "https://www.nhs.uk/nhs-services/urgent-and-emergency-care-services/when-to-go-to-ae/",
+    "keywords": ["bleeding", "won't stop bleeding", "deep wound", "bone sticking out", "broken bone", "head injury", "unconscious", "car accident", "fall"],
+    "text": "Bleeding that will not stop with firm pressure, a broken bone pushing through the skin, a head injury with vomiting, drowsiness or confusion, or loss of consciousness needs emergency care."
+  },
+  {
+    "id": "G-INJ-02",
+    "category": "Injuries",
+    "title": "Minor cuts, sprains and strains",
+    "level": "self_care",
+    "source": "NHS - Sprains and strains",
+    "url": "https://www.nhs.uk/conditions/sprains-and-strains/",
+    "keywords": ["sprain", "strain", "twisted ankle", "minor cut", "graze", "bruise", "swollen ankle", "knee"],
+    "text": "Minor cuts, sprains and strains can usually be treated at home with rest, ice, compression and elevation, and advice from a pharmacist. Get assessed if you cannot put weight on the limb, it looks deformed, or pain is severe."
+  },
+  {
+    "id": "G-INJ-03",
+    "category": "Injuries",
+    "title": "Injury that needs same-day assessment",
+    "level": "urgent",
+    "source": "NHS - Urgent treatment centres",
+    "url": "https://www.nhs.uk/nhs-services/urgent-and-emergency-care-services/",
+    "keywords": ["can't walk", "can't put weight", "deep cut", "stitches", "possible fracture", "animal bite", "dog bite"],
+    "text": "A cut that may need stitches, an animal bite, a suspected broken bone, or being unable to put weight on a limb should be seen the same day at an urgent care clinic."
+  },
+  {
+    "id": "G-BURN-01",
+    "category": "Burns",
+    "title": "Burns",
+    "level": "urgent",
+    "source": "NHS - Burns and scalds",
+    "url": "https://www.nhs.uk/conditions/burns-and-scalds/",
+    "keywords": ["burn", "scald", "blister", "hot water", "fire"],
+    "text": "Cool a burn under cool running water for 20 minutes. Burns larger than the person's hand, burns that are deep, or burns on the face, hands, feet or genitals need same-day assessment. Burns with breathing problems or from chemicals or electricity need emergency care."
+  },
+  {
+    "id": "G-ALLERGY-01",
+    "category": "Allergic reaction",
+    "title": "Anaphylaxis",
+    "level": "emergency",
+    "source": "NHS - Anaphylaxis",
+    "url": "https://www.nhs.uk/conditions/anaphylaxis/",
+    "keywords": ["swollen throat", "swollen tongue", "swelling lips", "anaphylaxis", "allergic", "epipen", "hives", "throat closing"],
+    "text": "Swelling of the throat or tongue, difficulty breathing or swallowing, or feeling faint after contact with an allergen may be anaphylaxis. Use an adrenaline auto-injector if available and call emergency services immediately."
+  },
+  {
+    "id": "G-ALLERGY-02",
+    "category": "Allergic reaction",
+    "title": "Mild allergy, hay fever, itchy rash",
+    "level": "self_care",
+    "source": "NHS - Allergies",
+    "url": "https://www.nhs.uk/conditions/allergies/",
+    "keywords": ["itchy", "hay fever", "sneezing", "mild rash", "allergy", "itchy eyes"],
+    "text": "Mild allergic symptoms such as sneezing, itchy eyes or a mild itchy rash can usually be managed with advice from a pharmacist."
+  },
+  {
+    "id": "G-THROAT-01",
+    "category": "Ear, nose and throat",
+    "title": "Sore throat and earache",
+    "level": "self_care",
+    "source": "NHS - Sore throat",
+    "url": "https://www.nhs.uk/conditions/sore-throat/",
+    "keywords": ["sore throat", "earache", "ear pain", "tonsils", "swallowing hurts"],
+    "text": "Sore throats and earaches usually get better within a week. A pharmacist can advise. Book an appointment if symptoms last longer than a week, are very painful, or come with a high temperature."
+  },
+  {
+    "id": "G-UTI-01",
+    "category": "Urinary symptoms",
+    "title": "Urinary tract infection symptoms",
+    "level": "routine",
+    "source": "NHS - Urinary tract infections",
+    "url": "https://www.nhs.uk/conditions/urinary-tract-infections-utis/",
+    "keywords": ["burning urine", "peeing", "urination", "pee often", "cloudy urine", "uti", "bladder"],
+    "text": "Pain or burning when urinating and needing to pee more often may be a urinary tract infection. A clinician or pharmacist can assess. Get same-day help if you have a high temperature, back or side pain, or blood in urine."
+  },
+  {
+    "id": "G-SKIN-01",
+    "category": "Skin",
+    "title": "Rash",
+    "level": "routine",
+    "source": "NHS - Skin rashes",
+    "url": "https://www.nhs.uk/conditions/rashes-babies-and-children/",
+    "keywords": ["rash", "spots", "eczema", "itchy skin", "red skin", "acne"],
+    "text": "Most rashes are not serious. A rash that does not fade when a glass is pressed against it, or a rash with high temperature and feeling very unwell, needs emergency care. Other persistent rashes can be reviewed at a routine appointment."
+  },
+  {
+    "id": "G-BACK-01",
+    "category": "Musculoskeletal",
+    "title": "Back pain",
+    "level": "routine",
+    "source": "NHS - Back pain",
+    "url": "https://www.nhs.uk/conditions/back-pain/",
+    "keywords": ["back pain", "lower back", "stiff back", "neck pain", "shoulder pain", "joint pain"],
+    "text": "Most back pain improves within weeks with staying active and simple pain relief. Book a routine appointment if it does not improve. Numbness around the genitals or bottom, or loss of bladder or bowel control, needs emergency care."
+  },
+  {
+    "id": "G-MH-01",
+    "category": "Mental health",
+    "title": "Mental health crisis or risk of self-harm",
+    "level": "emergency",
+    "source": "WHO - Suicide prevention / NHS urgent mental health help",
+    "url": "https://www.nhs.uk/nhs-services/mental-health-services/where-to-get-urgent-help-for-mental-health/",
+    "keywords": ["suicide", "kill myself", "end my life", "self-harm", "hurt myself", "overdose", "don't want to live"],
+    "text": "If someone is at immediate risk of harming themselves or has taken an overdose, call emergency services now. Stay with them and remove anything they could use to harm themselves."
+  },
+  {
+    "id": "G-MH-02",
+    "category": "Mental health",
+    "title": "Low mood, anxiety and stress",
+    "level": "routine",
+    "source": "NHS - Mental health services",
+    "url": "https://www.nhs.uk/mental-health/",
+    "keywords": ["anxious", "anxiety", "stressed", "low mood", "depressed", "can't sleep", "panic", "worried"],
+    "text": "Ongoing low mood, anxiety or poor sleep can be helped by talking to a clinician. Book a routine appointment or a telehealth consultation. If thoughts of self-harm appear, seek urgent help."
+  },
+  {
+    "id": "G-PREG-01",
+    "category": "Pregnancy",
+    "title": "Pregnancy danger signs",
+    "level": "emergency",
+    "source": "WHO - Antenatal care recommendations",
+    "url": "https://www.who.int/publications/i/item/9789241549912",
+    "keywords": ["pregnant", "pregnancy", "bleeding", "baby not moving", "severe headache", "blurred vision", "waters broke", "swelling"],
+    "text": "During pregnancy, vaginal bleeding, severe abdominal pain, a severe headache with blurred vision, fits, fever, or the baby moving less than usual need emergency care."
+  },
+  {
+    "id": "G-SEIZ-01",
+    "category": "Neurological",
+    "title": "Seizure or loss of consciousness",
+    "level": "emergency",
+    "source": "NHS - Epilepsy: what to do if someone has a seizure",
+    "url": "https://www.nhs.uk/conditions/epilepsy/what-to-do-if-someone-has-a-seizure-fit/",
+    "keywords": ["seizure", "fit", "convulsion", "fainted", "passed out", "unconscious", "not responding", "collapsed"],
+    "text": "Call emergency services if it is someone's first seizure, a seizure lasts more than 5 minutes, the person does not wake up afterwards, or they are injured. Unresponsiveness or collapse needs emergency care."
+  }
+]
