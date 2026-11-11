@@ -1,0 +1,10 @@
+[
+  {"id": "P-PHARM-01", "name": "MedPlus Community Pharmacy", "type": "pharmacy", "service": "Pharmacist consultation", "levels": ["self_care"], "price": 8.00, "city": "Lagos", "eta_minutes": 15, "rating": 4.7, "paypal_email": "sb-pharmacy@business.example.com"},
+  {"id": "P-PHARM-02", "name": "HealthPlus Pharmacy (Video)", "type": "pharmacy", "service": "Remote pharmacist video call", "levels": ["self_care"], "price": 6.50, "city": "Online", "eta_minutes": 10, "rating": 4.5, "paypal_email": "sb-healthplus@business.example.com"},
+  {"id": "P-TELE-01", "name": "MyDoc Telehealth", "type": "telehealth", "service": "Video consultation with a GP", "levels": ["routine", "self_care"], "price": 25.00, "city": "Online", "eta_minutes": 30, "rating": 4.8, "paypal_email": "sb-mydoc@business.example.com"},
+  {"id": "P-TELE-02", "name": "CareNow Virtual Clinic", "type": "telehealth", "service": "Same-day video consultation", "levels": ["routine", "urgent"], "price": 35.00, "city": "Online", "eta_minutes": 45, "rating": 4.6, "paypal_email": "sb-carenow@business.example.com"},
+  {"id": "P-CLINIC-01", "name": "Reddington Urgent Care", "type": "clinic", "service": "Same-day urgent care visit", "levels": ["urgent"], "price": 60.00, "city": "Lagos", "eta_minutes": 60, "rating": 4.7, "paypal_email": "sb-reddington@business.example.com"},
+  {"id": "P-CLINIC-02", "name": "Evercare Walk-in Clinic", "type": "clinic", "service": "Walk-in clinic with lab tests", "levels": ["urgent", "routine"], "price": 75.00, "city": "Lagos", "eta_minutes": 90, "rating": 4.9, "paypal_email": "sb-evercare@business.example.com"},
+  {"id": "P-ER-01", "name": "Lagos University Teaching Hospital - Emergency", "type": "emergency", "service": "Emergency department", "levels": ["emergency"], "price": 0.00, "city": "Lagos", "eta_minutes": 0, "rating": 4.4, "paypal_email": null},
+  {"id": "P-ER-02", "name": "St. Nicholas Hospital - Emergency", "type": "emergency", "service": "Emergency department", "levels": ["emergency"], "price": 0.00, "city": "Lagos", "eta_minutes": 0, "rating": 4.6, "paypal_email": null}
+]
