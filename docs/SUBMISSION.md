@@ -17,6 +17,7 @@ We're a team in Nigeria, where most healthcare is paid out of pocket and up fron
 5. **Clinic console and trust dashboard**: escalated cases go to a human clinician. The dashboard shows every agent decision, guardrail check, PayPal event, money flow, and our published reliability numbers.
 
 ## How we built it
+- **It's a 6-stage pipeline (guardrails -> red-flag rules -> BM25 retrieval over NHS/NICE/WHO -> Gemini -> output verification -> routing). No tool-calling loop and no vector store.**
 - **AI:** Google Gemini (`gemini-2.5-flash`) with structured JSON output, grounded by BM25 retrieval over a curated guideline knowledge base. A deterministic rules engine is the fallback.
 - **Guardrails as code, not prompts:** an input guard (scope, prompt injection, personal-data redaction), 14 red-flag rules that set a floor the LLM can never go below, and an output guard (grounding, confidence-based escalation to a human, removal of dosing and diagnosis language).
 - **PayPal:** Orders v2 (intent AUTHORIZE), JS SDK buttons, authorize, partial and full capture, void, refund, Payouts v1, and webhooks with signature verification, all with idempotency keys.
@@ -28,7 +29,7 @@ We're a team in Nigeria, where most healthcare is paid out of pocket and up fron
 - Our own eval set caught a serious bug: "I want to kill myself" was being blocked as off-topic by the scope filter. Red-flag language now always wins, and a regression test guards it.
 
 ## Accomplishments
-- **100% emergency recall, 0% under-triage** on our labelled set, enforced in CI.
+-Results: **100% emergency recall, 0% under-triage** on our labelled set, enforced in CI.
 - A full money lifecycle (authorize, capture or partial capture, refund, void, payout) driven by the triage decision.
 - Every decision is explainable: an agent trace, guardrail results and cited sources for each case.
 
