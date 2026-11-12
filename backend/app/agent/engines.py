@@ -114,8 +114,8 @@ class GeminiEngine:
     name = "gemini"
     MAX_ATTEMPTS = 2
     BACKOFF_SECONDS = 1.5
-    CALL_TIMEOUT_MS = 15_000
-    TOTAL_BUDGET_SECONDS = 25.0
+    CALL_TIMEOUT_MS = 18_000
+    TOTAL_BUDGET_SECONDS = 38.0
 
     def __init__(self, api_key: str, model: str, fallback_models: list[str] | None = None):
         from google import genai  # imported lazily so tests don't need network
@@ -165,7 +165,9 @@ class GeminiEngine:
                 except Exception as exc:  # retry only transient overload / rate-limit / unknown-model errors
                     last_exc = exc
                     msg = str(exc)
-                    if "404" in msg or "NOT_FOUND" in msg or "timed out" in msg.lower() or "timeout" in type(exc).__name__.lower():
+                    slow = any(x in msg for x in ("504", "DEADLINE_EXCEEDED")) or "timed out" in msg.lower() \
+                        or "timeout" in type(exc).__name__.lower()
+                    if "404" in msg or "NOT_FOUND" in msg or slow:
                         break  # unavailable for this key, or too slow: try the next model
                     if not any(code in msg for code in ("503", "429", "UNAVAILABLE", "RESOURCE_EXHAUSTED")):
                         raise

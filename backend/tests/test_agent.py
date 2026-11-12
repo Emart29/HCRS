@@ -97,6 +97,8 @@ def test_gemini_fails_over_to_next_model(monkeypatch):
             seen.append(model)
             if model == "busy-model":
                 raise RuntimeError("503 UNAVAILABLE high demand")
+            if model == "slow-model":
+                raise RuntimeError("504 DEADLINE_EXCEEDED")
 
             class R:
                 parsed = engines.TriageOutput(level="self_care", confidence=0.9, reasoning="r", advice="a",
@@ -105,7 +107,8 @@ def test_gemini_fails_over_to_next_model(monkeypatch):
 
     eng = engines.GeminiEngine.__new__(engines.GeminiEngine)
     eng.client = type("C", (), {"models": FakeModels()})()
-    eng.model, eng.models = "busy-model", ["busy-model", "backup-model"]
+    eng.model, eng.models = "busy-model", ["busy-model", "slow-model", "backup-model"]
     monkeypatch.setattr(engines.time, "sleep", lambda s: None)
     d = eng.decide("sore throat", 30, None, None, retrieve("sore throat"), [])
-    assert d.level == "self_care" and seen == ["busy-model", "busy-model", "backup-model"]
+    # busy: retried once; slow (deadline): skipped immediately; backup answers
+    assert d.level == "self_care" and seen == ["busy-model", "busy-model", "slow-model", "backup-model"]
