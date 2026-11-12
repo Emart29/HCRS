@@ -18,7 +18,7 @@ We're a team in Nigeria, where most healthcare is paid out of pocket and up fron
 
 ## How we built it
 - **It's a 6-stage pipeline (guardrails -> red-flag rules -> BM25 retrieval over NHS/NICE/WHO -> Gemini -> output verification -> routing). No tool-calling loop and no vector store.**
-- **AI:** Google Gemini (`gemini-2.5-flash`) with structured JSON output, grounded by BM25 retrieval over a curated guideline knowledge base. A deterministic rules engine is the fallback.
+- **AI:** Google Gemini (`gemini-3.8-flash`) with structured JSON output, grounded by BM25 retrieval over a curated guideline knowledge base. A deterministic rules engine is the fallback.
 - **Guardrails as code, not prompts:** an input guard (scope, prompt injection, personal-data redaction), 14 red-flag rules that set a floor the LLM can never go below, and an output guard (grounding, confidence-based escalation to a human, removal of dosing and diagnosis language).
 - **PayPal:** Orders v2 (intent AUTHORIZE), JS SDK buttons, authorize, partial and full capture, void, refund, Payouts v1, and webhooks with signature verification, all with idempotency keys.
 - **Stack:** Python and FastAPI, SQLite, React, TypeScript and Tailwind, Docker, Render, and GitHub Actions CI.

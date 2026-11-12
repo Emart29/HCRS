@@ -47,7 +47,7 @@ def get_settings() -> Settings:
     base = "https://api-m.paypal.com" if mode == "live" else "https://api-m.sandbox.paypal.com"
     return Settings(
         gemini_api_key=os.getenv("GEMINI_API_KEY") or None,
-        gemini_model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
+        gemini_model=os.getenv("GEMINI_MODEL", "gemini-3.8-flash"),
         paypal_client_id=os.getenv("PAYPAL_CLIENT_ID") or None,
         paypal_client_secret=os.getenv("PAYPAL_CLIENT_SECRET") or None,
         paypal_base_url=os.getenv("PAYPAL_BASE_URL", base),

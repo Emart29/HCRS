@@ -58,7 +58,7 @@ Symptom-checker chatbots exist, but they stop at advice. None of them close the 
 
 | Tool | Use |
 |---|---|
-| **Google Gemini** (`gemini-2.5-flash`, via the `google-genai` SDK) | Structured-output triage decision (JSON schema): level, confidence, reasoning, patient advice and an **SBAR clinical handoff note**, using *only* the retrieved guideline excerpts. The patient's text is fenced off as data so instructions inside it are ignored. |
+| **Google Gemini** (`gemini-3.8-flash`, via the `google-genai` SDK) | Structured-output triage decision (JSON schema): level, confidence, reasoning, patient advice and an **SBAR clinical handoff note**, using *only* the retrieved guideline excerpts. The patient's text is fenced off as data so instructions inside it are ignored. |
 | **BM25 retrieval** over a curated guideline knowledge base | Every decision must cite guidelines that were actually retrieved. |
 | **Deterministic guardrail layer** (Python, unit-tested) | Input guard (scope, prompt injection, personal-data redaction), 14 red-flag rules, output verification (grounding, confidence, unsafe language). |
 | **Rules engine fallback** | If Gemini is unavailable or rate-limited, the agent falls back to a deterministic engine and records it in the trace. It never crashes and never guesses. |
