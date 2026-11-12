@@ -114,11 +114,15 @@ class GeminiEngine:
     name = "gemini"
     MAX_ATTEMPTS = 2
     BACKOFF_SECONDS = 1.5
+    CALL_TIMEOUT_MS = 15_000
+    TOTAL_BUDGET_SECONDS = 25.0
 
     def __init__(self, api_key: str, model: str, fallback_models: list[str] | None = None):
         from google import genai  # imported lazily so tests don't need network
+        from google.genai import types
 
-        self.client = genai.Client(api_key=api_key)
+        # Per-request timeout: an overloaded model can take ~60s just to return a 503.
+        self.client = genai.Client(api_key=api_key, http_options=types.HttpOptions(timeout=self.CALL_TIMEOUT_MS))
         self.model = model
         self.models = [model] + [m for m in (fallback_models or self._discover_flash_models()) if m != model]
         log.info("Gemini models in failover order: %s", self.models)
@@ -150,16 +154,19 @@ class GeminiEngine:
         contents = build_prompt(symptoms, age, sex, duration, hits, red_flags)
         models = getattr(self, "models", None) or [self.model]
         response, last_exc = None, None
+        deadline = time.monotonic() + self.TOTAL_BUDGET_SECONDS
         for model in models:  # fail over to the next model when one is overloaded
             for attempt in range(self.MAX_ATTEMPTS):
+                if time.monotonic() > deadline:
+                    raise TimeoutError(f"Gemini did not answer within {self.TOTAL_BUDGET_SECONDS:.0f}s") from last_exc
                 try:
                     response = self.client.models.generate_content(model=model, contents=contents, config=config)
                     break
                 except Exception as exc:  # retry only transient overload / rate-limit / unknown-model errors
                     last_exc = exc
                     msg = str(exc)
-                    if "404" in msg or "NOT_FOUND" in msg:
-                        break  # model unavailable for this key: try the next one
+                    if "404" in msg or "NOT_FOUND" in msg or "timed out" in msg.lower() or "timeout" in type(exc).__name__.lower():
+                        break  # unavailable for this key, or too slow: try the next model
                     if not any(code in msg for code in ("503", "429", "UNAVAILABLE", "RESOURCE_EXHAUSTED")):
                         raise
                     if attempt < self.MAX_ATTEMPTS - 1:
