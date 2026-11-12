@@ -9,6 +9,8 @@
 
 Built for the **PayPal AI Hackathon 2026**.
 
+**Demo video (2:47):** https://youtu.be/UfoxrpqfnmY
+
 **Live demo:** https://careroute-s00k.onrender.com (free instance: the first request after idle can take about a minute to wake up)
 
 | Patient | Emergency | Clinic console | Trust dashboard |
