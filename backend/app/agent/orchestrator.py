@@ -45,7 +45,8 @@ class TriageAgent:
     def providers_for(self, level: str) -> list[dict]:
         return sorted((p for p in load_providers() if level in p["levels"]), key=lambda p: (p["price"], p["eta_minutes"]))
 
-    def run(self, symptoms: str, age: int | None = None, sex: str | None = None, duration: str | None = None) -> dict:
+    def run(self, symptoms: str, age: int | None = None, sex: str | None = None, duration: str | None = None,
+            use_llm: bool = True) -> dict:
         trace: list[dict] = []
         t0 = time.perf_counter()
 
@@ -74,7 +75,7 @@ class TriageAgent:
 
         engine_name = self.rules.name
         decision = None
-        if self.llm is not None:
+        if self.llm is not None and use_llm:
             try:
                 decision = self.llm.decide(guard.sanitized, age, sex, duration, hits, [f.label for f in flags])
                 engine_name = self.llm.name

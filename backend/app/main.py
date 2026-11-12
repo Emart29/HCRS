@@ -77,7 +77,10 @@ def create_app(settings: Settings | None = None, store: Store | None = None,
     app.state.service = service
 
     if os.getenv("AUTO_SEED", "").lower() in {"1", "true", "yes"} and not store.list_cases(1):
-        demo.seed(service)  # hosted demo: judges land on a dashboard that already tells the story
+        try:
+            demo.seed(service)  # hosted demo: judges land on a dashboard that already tells the story
+        except Exception:  # never let sample data stop the app from booting
+            logging.getLogger(__name__).exception("Demo seeding failed; starting without sample data")
 
     @app.exception_handler(WorkflowError)
     async def _workflow_error(_: Request, exc: WorkflowError):

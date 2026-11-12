@@ -17,7 +17,7 @@ from __future__ import annotations
 from .agent.orchestrator import SERVICE_FOR_LEVEL, TriageAgent
 from .config import Settings
 from .knowledge import LEVEL_RANK, load_providers
-from .payments.paypal import PaymentGateway, PayPalError
+from .payments.paypal import MockPayPal, PaymentGateway, PayPalError
 from .store import Store, now_iso
 
 PLATFORM_FEE_RATE = 0.05
@@ -43,6 +43,8 @@ class CareService:
         self.settings = settings
         self.store = store
         self.gateway = gateway
+        # Seeded sample cases always use this simulated gateway, never the real PayPal account.
+        self.demo_gateway = MockPayPal(mode="demo")
         self.agent = agent
 
     # ---- helpers -------------------------------------------------------
@@ -58,6 +60,9 @@ class CareService:
         case["events"] = self.store.events(case["id"])
         return case
 
+    def _gw(self, case: dict) -> PaymentGateway:
+        return self.demo_gateway if case["payment"].get("mode") == "demo" else self.gateway
+
     def _pay(self, fn, *args):
         try:
             return fn(*args)
@@ -66,8 +71,9 @@ class CareService:
 
     # ---- triage --------------------------------------------------------
     def triage(self, symptoms: str, age: int | None, sex: str | None, duration: str | None,
-               patient_name: str | None = None, location: str | None = None) -> dict:
-        result = self.agent.run(symptoms, age, sex, duration)
+               patient_name: str | None = None, location: str | None = None, demo: bool = False) -> dict:
+        # Demo seeding uses the deterministic engine: fast, free and identical on every boot.
+        result = self.agent.run(symptoms, age, sex, duration, use_llm=not demo)
         case_id = self.store.new_case_id()
         emergency = result["level"] == "emergency"
         case = {
@@ -80,7 +86,7 @@ class CareService:
             "review": {"status": "pending" if result["escalated"] else "none", "reasons": result["escalation_reasons"],
                        "clinician_note": None, "original_level": result["level"]},
             "provider": None,
-            "payment": {"required": not emergency, "mode": self.gateway.mode, "currency": self.settings.currency,
+            "payment": {"required": not emergency, "mode": "demo" if demo else self.gateway.mode, "currency": self.settings.currency,
                         "status": "not_required" if emergency else "not_started", "amount": 0.0,
                         "captured": 0.0, "refunded": 0.0, "platform_fee": 0.0, "payout_amount": 0.0},
         }
@@ -105,7 +111,7 @@ class CareService:
         level = case["triage"]["level"]
         if not provider or level not in provider["levels"]:
             raise WorkflowError(f"Provider does not offer {level} care", 400)
-        order = self._pay(self.gateway.create_order, provider["price"], self.settings.currency,
+        order = self._pay(self._gw(case).create_order, provider["price"], self.settings.currency,
                           f"CareRoute {SERVICE_FOR_LEVEL[level].split(' - ')[0]} - {provider['name']}", case_id)
         case["provider"] = provider
         case["status"] = "awaiting_payment"
@@ -122,7 +128,7 @@ class CareService:
             raise WorkflowError("Order does not belong to this case", 400)
         if case["status"] != "awaiting_payment":
             raise WorkflowError(f"Cannot authorize from status '{case['status']}'", 409)
-        auth = self._pay(self.gateway.authorize_order, order_id)
+        auth = self._pay(self._gw(case).authorize_order, order_id)
         case["status"] = "funds_held"
         case["payment"].update({"status": "authorized", "authorization_id": auth["authorization_id"],
                                 "authorization_expires_at": auth.get("expires_at"), "payer_email": auth.get("payer_email")})
@@ -140,7 +146,7 @@ class CareService:
             raise WorkflowError("A clinician must review this escalated case before payment is captured", 409)
         pay = case["payment"]
         amount = round(pay.get("adjusted_amount", pay["amount"]), 2)
-        cap = self._pay(self.gateway.capture_authorization, pay["authorization_id"], amount, self.settings.currency,
+        cap = self._pay(self._gw(case).capture_authorization, pay["authorization_id"], amount, self.settings.currency,
                         f"{case_id}-{pay['authorization_id'][-6:]}")
         pay.update({"status": "captured", "capture_id": cap["capture_id"], "captured": amount})
         self.store.log(case_id, "captured", "paypal",
@@ -157,7 +163,7 @@ class CareService:
         net = round(pay["captured"] - pay.get("refunded", 0.0) - fee, 2)
         if net <= 0 or not provider.get("paypal_email"):
             return
-        out = self._pay(self.gateway.create_payout, provider["paypal_email"], net, self.settings.currency,
+        out = self._pay(self._gw(case).create_payout, provider["paypal_email"], net, self.settings.currency,
                         f"CareRoute consultation {case['id']}", f"{case['id']}-{pay['capture_id'][-6:]}")
         pay.update({"platform_fee": fee, "payout_amount": net, "payout_batch_id": out["payout_batch_id"],
                     "payout_status": out["status"]})
@@ -168,7 +174,7 @@ class CareService:
     def cancel(self, case_id: str, reason: str) -> dict:
         case = self._get(case_id)
         if case["status"] == "funds_held":
-            self._pay(self.gateway.void_authorization, case["payment"]["authorization_id"])
+            self._pay(self._gw(case).void_authorization, case["payment"]["authorization_id"])
             case["payment"]["status"] = "voided"
             self.store.log(case_id, "voided", "paypal", f"Authorization voided, hold released: {reason}")
         elif case["status"] in {"triaged", "awaiting_payment"}:
@@ -204,7 +210,7 @@ class CareService:
         if new_level == "emergency":
             pay["required"] = False
             if case["status"] == "funds_held":
-                self._pay(self.gateway.void_authorization, pay["authorization_id"])
+                self._pay(self._gw(case).void_authorization, pay["authorization_id"])
                 pay["status"] = "voided"
                 self.store.log(case_id, "voided", "paypal", "Up-triaged to emergency: payment hold released in full")
             elif case["status"] == "completed" and pay["captured"] > pay["refunded"]:
@@ -227,7 +233,7 @@ class CareService:
                 case["status"] = "triaged"
         else:  # up-triaged to a more urgent, paid level
             if case["status"] == "funds_held":
-                self._pay(self.gateway.void_authorization, pay["authorization_id"])
+                self._pay(self._gw(case).void_authorization, pay["authorization_id"])
                 pay["status"] = "voided"
                 self.store.log(case_id, "voided", "paypal", "Up-triaged: hold released so the patient can book the right service")
                 case["status"] = "rebook_required"
@@ -237,7 +243,7 @@ class CareService:
 
     def _refund(self, case: dict, amount: float, note: str) -> None:
         pay = case["payment"]
-        out = self._pay(self.gateway.refund_capture, pay["capture_id"], amount, self.settings.currency, note)
+        out = self._pay(self._gw(case).refund_capture, pay["capture_id"], amount, self.settings.currency, note)
         pay["refunded"] = round(pay.get("refunded", 0.0) + amount, 2)
         pay["status"] = "refunded" if pay["refunded"] >= pay["captured"] else "partially_refunded"
         self.store.log(case["id"], "refunded", "paypal", f"Refunded {amount:.2f}: {note}", {"refund_id": out["refund_id"]})

@@ -149,11 +149,15 @@ class PayPalClient:
 
 
 class MockPayPal:
-    """In-memory stand-in for PayPal with the same contract (used without credentials, and in tests)."""
+    """In-memory stand-in for PayPal with the same contract.
 
-    mode = "mock"
+    Used when no credentials are configured (mode "mock"), for seeded demo cases (mode "demo",
+    so sample data never touches the real PayPal account), and in tests. IDs it has never seen
+    (for example after a restart) are accepted, so seeded cases stay actionable.
+    """
 
-    def __init__(self):
+    def __init__(self, mode: str = "mock"):
+        self.mode = mode
         self.orders: dict[str, dict] = {}
         self.auths: dict[str, dict] = {}
         self.captures: dict[str, dict] = {}
@@ -169,7 +173,7 @@ class MockPayPal:
 
     def authorize_order(self, order_id: str) -> dict:
         if order_id not in self.orders:
-            raise PayPalError("Order not found", 404)
+            self.orders[order_id] = {"amount": float("inf"), "status": "CREATED"}
         if self.orders[order_id]["status"] == "AUTHORIZED":
             raise PayPalError("Order already authorized", 422)
         self.orders[order_id]["status"] = "AUTHORIZED"
@@ -178,8 +182,8 @@ class MockPayPal:
         return {"authorization_id": aid, "status": "CREATED", "expires_at": None, "payer_email": "patient@sandbox.example.com"}
 
     def capture_authorization(self, authorization_id: str, amount: float, currency: str, invoice_id: str) -> dict:
-        auth = self.auths.get(authorization_id)
-        if not auth or auth["status"] != "CREATED":
+        auth = self.auths.setdefault(authorization_id, {"amount": float("inf"), "status": "CREATED"})
+        if auth["status"] != "CREATED":
             raise PayPalError("Authorization not capturable", 422)
         if amount > auth["amount"] + 1e-9:
             raise PayPalError("Capture exceeds authorized amount", 422)
@@ -189,15 +193,15 @@ class MockPayPal:
         return {"capture_id": cid, "status": "COMPLETED"}
 
     def void_authorization(self, authorization_id: str) -> dict:
-        auth = self.auths.get(authorization_id)
-        if not auth or auth["status"] != "CREATED":
+        auth = self.auths.setdefault(authorization_id, {"amount": float("inf"), "status": "CREATED"})
+        if auth["status"] != "CREATED":
             raise PayPalError("Authorization not voidable", 422)
         auth["status"] = "VOIDED"
         return {"status": "VOIDED"}
 
     def refund_capture(self, capture_id: str, amount: float, currency: str, note: str) -> dict:
-        cap = self.captures.get(capture_id)
-        if not cap or cap["refunded"] + amount > cap["amount"] + 1e-9:
+        cap = self.captures.setdefault(capture_id, {"amount": float("inf"), "refunded": 0.0})
+        if cap["refunded"] + amount > cap["amount"] + 1e-9:
             raise PayPalError("Refund exceeds captured amount", 422)
         cap["refunded"] += amount
         return {"refund_id": self._id("MOCK-REF-"), "status": "COMPLETED"}

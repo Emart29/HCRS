@@ -32,7 +32,7 @@ SCENARIOS = [
 def seed(service: CareService) -> int:
     count = 0
     for name, age, sex, duration, symptoms, script in SCENARIOS:
-        case = service.triage(symptoms, age, sex, duration, patient_name=name, location="Lagos, NG")
+        case = service.triage(symptoms, age, sex, duration, patient_name=name, location="Lagos, NG", demo=True)
         count += 1
         if not case["payment"]["required"] or not script:
             continue
