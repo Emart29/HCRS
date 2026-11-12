@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import logging
+import time
 from typing import Literal
 
 from pydantic import BaseModel
@@ -111,6 +112,8 @@ class RulesEngine:
 
 class GeminiEngine:
     name = "gemini"
+    MAX_ATTEMPTS = 3
+    BACKOFF_SECONDS = 1.5
 
     def __init__(self, api_key: str, model: str):
         from google import genai  # imported lazily so tests don't need network
@@ -122,16 +125,23 @@ class GeminiEngine:
                hits: list[Hit], red_flags: list[str]) -> Decision:
         from google.genai import types
 
-        response = self.client.models.generate_content(
-            model=self.model,
-            contents=build_prompt(symptoms, age, sex, duration, hits, red_flags),
-            config=types.GenerateContentConfig(
-                system_instruction=SYSTEM_PROMPT,
-                temperature=0.1,
-                response_mime_type="application/json",
-                response_schema=TriageOutput,
-            ),
+        config = types.GenerateContentConfig(
+            system_instruction=SYSTEM_PROMPT,
+            temperature=0.1,
+            response_mime_type="application/json",
+            response_schema=TriageOutput,
         )
+        contents = build_prompt(symptoms, age, sex, duration, hits, red_flags)
+        for attempt in range(self.MAX_ATTEMPTS):
+            try:
+                response = self.client.models.generate_content(model=self.model, contents=contents, config=config)
+                break
+            except Exception as exc:  # retry only transient overload / rate-limit errors
+                transient = any(code in str(exc) for code in ("503", "429", "UNAVAILABLE", "RESOURCE_EXHAUSTED"))
+                if not transient or attempt == self.MAX_ATTEMPTS - 1:
+                    raise
+                log.info("Gemini busy (%s), retrying", type(exc).__name__)
+                time.sleep(self.BACKOFF_SECONDS * (attempt + 1))
         parsed = response.parsed
         if parsed is None:
             parsed = TriageOutput.model_validate(json.loads(response.text))
