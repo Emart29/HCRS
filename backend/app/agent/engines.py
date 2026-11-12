@@ -145,12 +145,11 @@ class GeminiEngine:
                hits: list[Hit], red_flags: list[str]) -> Decision:
         from google.genai import types
 
-        config = types.GenerateContentConfig(
-            system_instruction=SYSTEM_PROMPT,
-            temperature=0.1,
-            response_mime_type="application/json",
-            response_schema=TriageOutput,
-        )
+        base = dict(system_instruction=SYSTEM_PROMPT, temperature=0.1,
+                    response_mime_type="application/json", response_schema=TriageOutput)
+        # Low thinking: a grounded 4-way classification doesn't need long reasoning, and it cuts latency a lot.
+        config = types.GenerateContentConfig(**base, thinking_config=types.ThinkingConfig(thinking_level=types.ThinkingLevel.LOW))
+        plain_config = types.GenerateContentConfig(**base)
         contents = build_prompt(symptoms, age, sex, duration, hits, red_flags)
         models = getattr(self, "models", None) or [self.model]
         response, last_exc = None, None
@@ -165,6 +164,9 @@ class GeminiEngine:
                 except Exception as exc:  # retry only transient overload / rate-limit / unknown-model errors
                     last_exc = exc
                     msg = str(exc)
+                    if "400" in msg and "thinking" in msg.lower() and config is not plain_config:
+                        config = plain_config  # this model doesn't accept thinking settings: call it plainly
+                        continue
                     slow = any(x in msg for x in ("504", "DEADLINE_EXCEEDED")) or "timed out" in msg.lower() \
                         or "timeout" in type(exc).__name__.lower()
                     if "404" in msg or "NOT_FOUND" in msg or slow:
