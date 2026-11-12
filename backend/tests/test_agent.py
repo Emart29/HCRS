@@ -80,7 +80,32 @@ def test_gemini_retries_transient_overload(monkeypatch):
 
     eng = engines.GeminiEngine.__new__(engines.GeminiEngine)
     eng.client = type("C", (), {"models": FakeModels()})()
-    eng.model = "m"
+    eng.model, eng.models = "m", ["m"]
+    eng.MAX_ATTEMPTS = 3
     monkeypatch.setattr(engines.time, "sleep", lambda s: None)
     d = eng.decide("burning pee", 30, None, None, retrieve("burning urine"), [])
     assert d.level == "routine" and calls["n"] == 3
+
+
+def test_gemini_fails_over_to_next_model(monkeypatch):
+    from app.agent import engines
+
+    seen = []
+
+    class FakeModels:
+        def generate_content(self, model, **kw):
+            seen.append(model)
+            if model == "busy-model":
+                raise RuntimeError("503 UNAVAILABLE high demand")
+
+            class R:
+                parsed = engines.TriageOutput(level="self_care", confidence=0.9, reasoning="r", advice="a",
+                                              handoff_summary="h", citations=["G-THROAT-01"])
+            return R()
+
+    eng = engines.GeminiEngine.__new__(engines.GeminiEngine)
+    eng.client = type("C", (), {"models": FakeModels()})()
+    eng.model, eng.models = "busy-model", ["busy-model", "backup-model"]
+    monkeypatch.setattr(engines.time, "sleep", lambda s: None)
+    d = eng.decide("sore throat", 30, None, None, retrieve("sore throat"), [])
+    assert d.level == "self_care" and seen == ["busy-model", "busy-model", "backup-model"]

@@ -112,14 +112,30 @@ class RulesEngine:
 
 class GeminiEngine:
     name = "gemini"
-    MAX_ATTEMPTS = 3
+    MAX_ATTEMPTS = 2
     BACKOFF_SECONDS = 1.5
 
-    def __init__(self, api_key: str, model: str):
+    def __init__(self, api_key: str, model: str, fallback_models: list[str] | None = None):
         from google import genai  # imported lazily so tests don't need network
 
         self.client = genai.Client(api_key=api_key)
         self.model = model
+        self.models = [model] + [m for m in (fallback_models or self._discover_flash_models()) if m != model]
+        log.info("Gemini models in failover order: %s", self.models)
+
+    def _discover_flash_models(self) -> list[str]:
+        """Ask the API which Flash models this key can use, so overload on one model can fail over."""
+        try:
+            names = []
+            for m in self.client.models.list():
+                name = (m.name or "").removeprefix("models/")
+                actions = getattr(m, "supported_actions", None) or []
+                if "flash" in name and "generateContent" in actions and not any(x in name for x in ("tts", "image", "audio", "live", "embedding")):
+                    names.append(name)
+            return sorted(names, key=lambda n: ("preview" in n or "exp" in n, "lite" in n, n), reverse=False)[:3]
+        except Exception as exc:  # discovery is best-effort
+            log.warning("Could not list Gemini models (%s)", exc)
+            return []
 
     def decide(self, symptoms: str, age: int | None, sex: str | None, duration: str | None,
                hits: list[Hit], red_flags: list[str]) -> Decision:
@@ -132,16 +148,28 @@ class GeminiEngine:
             response_schema=TriageOutput,
         )
         contents = build_prompt(symptoms, age, sex, duration, hits, red_flags)
-        for attempt in range(self.MAX_ATTEMPTS):
-            try:
-                response = self.client.models.generate_content(model=self.model, contents=contents, config=config)
+        models = getattr(self, "models", None) or [self.model]
+        response, last_exc = None, None
+        for model in models:  # fail over to the next model when one is overloaded
+            for attempt in range(self.MAX_ATTEMPTS):
+                try:
+                    response = self.client.models.generate_content(model=model, contents=contents, config=config)
+                    break
+                except Exception as exc:  # retry only transient overload / rate-limit / unknown-model errors
+                    last_exc = exc
+                    msg = str(exc)
+                    if "404" in msg or "NOT_FOUND" in msg:
+                        break  # model unavailable for this key: try the next one
+                    if not any(code in msg for code in ("503", "429", "UNAVAILABLE", "RESOURCE_EXHAUSTED")):
+                        raise
+                    if attempt < self.MAX_ATTEMPTS - 1:
+                        log.info("Gemini %s busy (%s), retrying", model, type(exc).__name__)
+                        time.sleep(self.BACKOFF_SECONDS * (attempt + 1))
+            if response is not None:
+                self.last_model = model
                 break
-            except Exception as exc:  # retry only transient overload / rate-limit errors
-                transient = any(code in str(exc) for code in ("503", "429", "UNAVAILABLE", "RESOURCE_EXHAUSTED"))
-                if not transient or attempt == self.MAX_ATTEMPTS - 1:
-                    raise
-                log.info("Gemini busy (%s), retrying", type(exc).__name__)
-                time.sleep(self.BACKOFF_SECONDS * (attempt + 1))
+        if response is None:
+            raise last_exc or RuntimeError("No Gemini model available")
         parsed = response.parsed
         if parsed is None:
             parsed = TriageOutput.model_validate(json.loads(response.text))

@@ -24,6 +24,7 @@ def _flag(name: str, default: bool = False) -> bool:
 class Settings:
     gemini_api_key: str | None
     gemini_model: str
+    gemini_fallback_models: list
     paypal_client_id: str | None
     paypal_client_secret: str | None
     paypal_base_url: str
@@ -48,6 +49,7 @@ def get_settings() -> Settings:
     return Settings(
         gemini_api_key=os.getenv("GEMINI_API_KEY") or None,
         gemini_model=os.getenv("GEMINI_MODEL", "gemini-3.8-flash"),
+        gemini_fallback_models=[m.strip() for m in os.getenv("GEMINI_FALLBACK_MODELS", "").split(",") if m.strip()],
         paypal_client_id=os.getenv("PAYPAL_CLIENT_ID") or None,
         paypal_client_secret=os.getenv("PAYPAL_CLIENT_SECRET") or None,
         paypal_base_url=os.getenv("PAYPAL_BASE_URL", base),

@@ -38,7 +38,7 @@ class TriageAgent:
         self.llm = None
         if settings.llm_enabled:
             try:
-                self.llm = GeminiEngine(settings.gemini_api_key, settings.gemini_model)
+                self.llm = GeminiEngine(settings.gemini_api_key, settings.gemini_model, settings.gemini_fallback_models or None)
             except Exception:  # pragma: no cover - depends on environment
                 log.exception("Gemini unavailable, using rules engine")
 
